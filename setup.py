@@ -14,7 +14,7 @@ setuptools.setup(
     description="A package that can be used to create a build process",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/Aesonus/py-build",
     packages=setuptools.find_packages(exclude=('tests',)),
     classifiers=[
         "Programming Language :: Python :: 3",
