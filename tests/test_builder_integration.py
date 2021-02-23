@@ -1,8 +1,13 @@
-from pywin_installer.build import Builder
 import pytest
+from py_build.build import Builder
 
 
-def test_mockup_builder():
+@pytest.fixture
+def builder():
+    return Builder()
+
+
+def test_mockup_builder(builder):
     output_list = []
     progress_reports = []
 
@@ -12,15 +17,15 @@ def test_mockup_builder():
     def progress_report(progress):
         progress_reports.append(progress)
 
-    progress = Builder.progress_to(progress_report)
-    output_main_step = Builder.output_to(progress(main_step_output))
+    progress = builder.progress_to(progress_report)
+    output_main_step = builder.output_to(progress(main_step_output))
 
-    @Builder.build_step
+    @builder.build_step
     @output_main_step
     def get_hello():
         return "Hello"
 
-    @Builder.build_step
+    @builder.build_step
     @output_main_step
     def get_name(name=None):
         return name

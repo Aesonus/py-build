@@ -1,5 +1,6 @@
 from .build import Builder
-name="pywin-installer/pywin_installer"
+
+name = "py-build/py_build"
 __version__ = "1.0.0"
 
 __all__ = [
