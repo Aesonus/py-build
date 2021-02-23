@@ -11,7 +11,7 @@ setuptools.setup(
     version=__version__,
     author="Cory Laughlin",
     author_email="corylcomposinger@gmail.com",
-    description="A package that can be used to create an installer program",
+    description="A package that can be used to create a build process",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="",
