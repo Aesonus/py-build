@@ -2,6 +2,12 @@ from typing import Any, Callable, List, Mapping
 
 from itertools import repeat, zip_longest
 import functools
+import traceback
+
+class BuildException(Exception):
+    def __init__(self, build_step: Callable, *args: object) -> None:
+        self.build_step = build_step
+        super().__init__(*args)
 
 class Builder(object):
     def __init__(self) -> None:
@@ -31,7 +37,11 @@ class Builder(object):
         ):
             if args is None:
                 args = tuple()
-            fnc(*args)
+            try:
+                fn_name = fnc.__name__
+                fnc(*args)
+            except Exception as ex:
+                raise BuildException(fnc) from ex
 
     def build_step(self) -> Callable:
         """Counts each method decorated with this decorator"""

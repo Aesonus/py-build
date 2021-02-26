@@ -1,4 +1,4 @@
-from py_build.funcs import output_step, output_step_result
+from py_build.funcs import print_step_name
 from typing import Callable, List
 from py_build import Builder
 import pathlib
@@ -6,8 +6,8 @@ import pathlib
 def build_steps(builder: Builder):
     build_step = builder.composed(
         builder.build_step(),
-        builder.capture_results(output_step_result),
-        output_step(),
+        builder.capture_results(print),
+        print_step_name(),
     )
 
     @build_step
