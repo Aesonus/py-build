@@ -4,7 +4,7 @@ import functools
 import subprocess
 
 def build_steps(builder: Builder):
-    step = builder.composed_step(builder.build_step(), print_step_name(), builder.capture_results(print))
+    step = builder.composed_step(print_step_name(), builder.capture_results(print))
 
     @builder.capture_results(print)
     def run(*args):
@@ -12,7 +12,6 @@ def build_steps(builder: Builder):
 
     @step
     def create_sdist():
-        r = 1 / 0
         run(
             'python', 'setup.py', 'sdist'
         )

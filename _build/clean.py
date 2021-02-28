@@ -5,7 +5,6 @@ import pathlib
 
 def build_steps(builder: Builder):
     build_step = builder.composed_step(
-        builder.build_step(),
         builder.capture_results(print),
         print_step_name(),
     )
