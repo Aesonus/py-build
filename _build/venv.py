@@ -3,7 +3,7 @@ from py_build import Builder
 import subprocess
 
 def build_steps(builder: Builder):
-    build_step = builder.composed(
+    build_step = builder.composed_step(
         builder.build_step(),
         builder.capture_results(print),
         print_step_name(),

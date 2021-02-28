@@ -25,7 +25,7 @@ def ci_actions() -> Dict[str, subprocess.CompletedProcess]:
     )})
 
     ret.update({'pytest': subprocess.run(
-        [interpereter, '-m', 'pytest', '--cov=py_build', '--cov-report', "xml:" + str(coverage_file), 'tests'], capture_output=True, text=True
+        [interpereter, '-m', 'pytest', 'tests'], capture_output=True, text=True
     )})
     return ret
 
@@ -35,7 +35,7 @@ class PyFileChangeHandler(events.PatternMatchingEventHandler):
         if all((r.returncode == 0 for r in ret.values())):
             print('CI Success {:%I:%M}'.format(datetime.datetime.now()))
         else:
-            print('CI Failed\n{}'.format("\n".join([k + ': ' + r.stdout for k, r in ret.items()])))
+            print('CI Failed\n{}'.format("\n".join([k + ': ' + r.stdout for k, r in ret.items() if r.returncode != 0])))
 
 if __name__ == '__main__':
     import argparse
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             print('CI Checks Failed!\n{}'.format("\n".join([k + ': ' + r.stdout for k, r in ret.items() if r.returncode != 0])))
             exit(1)
 
-    observer = polling.PollingObserver(timeout=5)
+    observer = polling.PollingObserver(timeout=3)
     observer.schedule(PyFileChangeHandler(ignore_directories=True, patterns=('*.py',), ignore_patterns='_build'), '.', recursive=True)
     observer.start()
     try:

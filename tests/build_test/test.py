@@ -2,7 +2,7 @@ from py_build import Builder
 from py_build.funcs import print_step_name
 
 def build_steps(builder: Builder):
-    step = builder.composed(builder.build_step(), print_step_name(), builder.capture_results(print))
+    step = builder.composed_step(print_step_name(), builder.capture_results(print))
 
     @builder.capture_results(print)
     def test_me(*args):

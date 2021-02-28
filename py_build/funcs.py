@@ -1,5 +1,8 @@
-from typing import Callable, Sequence
+from __future__ import annotations
+from typing import Callable, Sequence, TYPE_CHECKING
 import functools
+if TYPE_CHECKING:
+    from .build import BuildStepCallable
 
 def split_step_name(name: str, new = ' ', old='_'):
     return name.replace(old, new).capitalize()
@@ -23,3 +26,14 @@ def print_step_doc():
             return func(*args, *kwargs)
         return output_func_doc
     return decorate_with
+
+def composed(*decorators: BuildStepCallable) -> BuildStepCallable:
+    """
+    Used to compose a decorator. Useful for defining specific
+    outputs and progress reports to a build step and resusing
+    """
+    def decorated(func: BuildStepCallable):
+        for decorator in reversed(decorators):
+            func = decorator(func)
+        return func
+    return decorated

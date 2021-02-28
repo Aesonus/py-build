@@ -183,11 +183,15 @@ builder.build()
 # 100
 ```
 
-### Using arguments
+There are a few caveats to note about the above example:
 
-It is also possible to pass arguments to each build step.
++ The ```Builder().build_step()``` must be the first decorator for a function for the example to work correctly
++ Build steps that require arguments should be defined as keyword arguments at definition
++ ```Builder``` instances are callable, so calling ```Builder()()``` is the same as calling ```Builder().build()```.
 
-The following example illustrates this:
+## Sub steps
+
+The ```Builder().build()``` method can also handle steps that have a sub step. These can be designed as such:
 
 ```python
 import py_build
@@ -207,42 +211,50 @@ main_step = builder.composed(
     @builder.capture_results(output_fnc)
 )
 
-# Add steps to the builder
+@main_step
+def get_hello():
+    """Get the salulation"""
+    return "Hello"
 
 @main_step
-def step1(kw: str='keyword'):
-    return "Output from step 1 " + kw
+def sub_step():
+    new_builder = py_build.Builder()
+    substep = new_builder.composed(
+        new_builder.build_step(),
+        new_builder.capture_progress(progress_fnc), # We will use the same progress reporting method as in main steps
+        new_builder.capture_results(output_fnc), # We will use the same result reporting method as in main steps
+    )
+    @substep
+    def sub_step_1():
+        """Get the sub step"""
+        return "Sub step 1"
+    @substep
+    def sub_step_2():
+        """Get the sub step"""
+        return "Sub step 2"
+    # Returning a builder object indicates that the step has its own steps
+    return new_builder
 
 @main_step
-def step2(pos: str):
-    return "Output from step 2 " + pos
+def get_name(name='Cory'):
+    """Get the name"""
+    return name
 
-@main_step
-def step3():
-    return "Output from step 3"
-
-# The following is the same as calling:
-# step1()
-# step2('positional')
-# step3()
-
-builder.build(
-    [None, ('positional',)]
-)
+builder.build()
 
 # Prints:
-# Output from step 1 keyword
+# Hello
 # 33
-# Output from step 2 positional
+# Sub step 1
+# 50
+# Sub step 2
 # 67
-# Output from step 3
+# Cory
 # 100
 ```
 
-There are a few caveats to note about the above example:
+## Release Notes
 
-+ The arguments passed are passed in by the order given in iterables
-+ Arguments that are ```None``` type are passed in as ```tuple()```'s
-+ If the arguments list is shorter than the number of build steps then the remaining arguments are ```None```
-+ The ```Builder().build_step()``` must be the first decorator for a function for the example to work correctly
-+ It may be more readable to use keyword arguments in build steps instead of positional for large build processes
+There are several changes that may break compatibility between version 0.1.0 and 0.2.0 as outlined below:
+
++ ```Builder().composed()``` has been renamed to ```Builder().composed_step()``` and its functionality has changed

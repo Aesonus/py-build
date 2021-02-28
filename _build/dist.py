@@ -4,7 +4,7 @@ import functools
 import subprocess
 
 def build_steps(builder: Builder):
-    step = builder.composed(builder.build_step(), print_step_name(), builder.capture_results(print))
+    step = builder.composed_step(builder.build_step(), print_step_name(), builder.capture_results(print))
 
     @builder.capture_results(print)
     def run(*args):

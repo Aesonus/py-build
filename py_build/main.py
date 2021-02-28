@@ -1,23 +1,18 @@
 from py_build import Builder
 import logging
 import importlib
+import sys
 
-def main(directory: str, *targets) -> None:
+def main(package: str, *targets) -> int:
     for target in targets:
-        module = "{}.{}".format(directory, target)
+        module = "{}.{}".format(package, target)
         try:
             build_steps = importlib.import_module(module).build_steps
         except ModuleNotFoundError as ex:
-            logging.error(' %s not found', ex.name)
-            exit(1)
-        except AttributeError as ex1:
-            try:
-                build_steps = importlib.import_module(module).Build
-            except AttributeError as ex2:
-                logging.error("%s", ex1.args[0])
-                logging.error("%s", ex2.args[0])
-                exit(1)
-
+            print("Module `{}` not found".format(module), file=sys.stderr)
+            logging.getLogger(__name__).error("Module `%s` not found", module)
+            return 1
         builder = Builder()
         build_steps(builder)
         builder.build()
+    return 0
