@@ -2,5 +2,3 @@ Create and test new funcs for common use
 
 Create a system to where main module build failures output a message with details on
 the failed build step. The builder object should have an appropriate state
-
-Allow for sub stages too
